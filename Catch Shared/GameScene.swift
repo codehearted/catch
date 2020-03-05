@@ -14,7 +14,7 @@ class GameScene: SKScene {
     fileprivate var box : SKShapeNode?
     fileprivate var theFallGuy : SKShapeNode?
     fileprivate var spinnyNode : SKShapeNode?
-
+    fileprivate var score : Int = 0
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -120,19 +120,33 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let box = self.box {
-            box.fillColor = SKColor.white
-            
-            
-        }
+
+        var hitGuy = false
         for t in touches {
             self.makeSpinny(at: t.location(in: self), color: SKColor.red)
+            if (theFallGuy?.contains(t.location(in: self)))! {
+                hitGuy = true
+            }
         }
         
+                
         if let theFallGuy = self.theFallGuy {
-            let w = (self.size.width + self.size.height) * 0.05
+//            let w = (self.size.width + self.size.height) * 0.05
             theFallGuy.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             theFallGuy.position = CGPoint(x: Int(Float.random(in: -240...240)), y: 350)
+        }
+        
+        if let box = self.box {
+            if hitGuy {
+                box.fillColor = SKColor.lightGray
+                score = score + 1
+            } else {
+                box.fillColor = SKColor.white
+                score = 0
+            }
+            if let label = self.label {
+                label.text = "Score: \(score)"
+            }
         }
     }
     
