@@ -12,6 +12,7 @@ class GameScene: SKScene {
     
     fileprivate var label : SKLabelNode?
     fileprivate var box : SKShapeNode?
+    fileprivate var theFallGuy : SKShapeNode?
     fileprivate var spinnyNode : SKShapeNode?
 
     
@@ -39,7 +40,18 @@ class GameScene: SKScene {
         
         // Create shape node to use during mouse interaction
         let w = (self.size.width + self.size.height) * 0.05
+        self.theFallGuy = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
         self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+
+        if let theFallGuy = self.theFallGuy {
+            theFallGuy.fillColor = SKColor.orange
+            theFallGuy.strokeColor = SKColor.black
+            theFallGuy.position = CGPoint(x: 0, y: 5)
+            theFallGuy.physicsBody = SKPhysicsBody(rectangleOf: CGSize.init(width: w, height: w))
+            theFallGuy.physicsBody?.mass = 1.0
+            theFallGuy.physicsBody?.affectedByGravity = true
+            self.addChild(theFallGuy)
+        }
         
         if let spinnyNode = self.spinnyNode {
             spinnyNode.lineWidth = 4.0
@@ -109,13 +121,18 @@ extension GameScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let box = self.box {
-            box.fillColor = SKColor.red
+            box.fillColor = SKColor.white
             
-//            box.run(SKAction.sequence(SKAction.wait(forDuration: 0.5),
-//                                      SKAction.setTexture(SKTexture.init(image:UIImage.color))))
+            
         }
         for t in touches {
             self.makeSpinny(at: t.location(in: self), color: SKColor.red)
+        }
+        
+        if let theFallGuy = self.theFallGuy {
+            let w = (self.size.width + self.size.height) * 0.05
+            theFallGuy.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            theFallGuy.position = CGPoint(x: Int(Float.random(in: -240...240)), y: 350)
         }
     }
     
